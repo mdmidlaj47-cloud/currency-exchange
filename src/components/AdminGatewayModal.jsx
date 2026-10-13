@@ -68,9 +68,9 @@ export default function AdminGatewayModal({
             </div>
             <div>
               <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                Admin & API Gateway Module
+                API Gateway & Telemetry Control
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  Slide 7 Implementation
+                  Diagnostics
                 </span>
               </h3>
               <p className="text-xs text-slate-400">System oversight, API health telemetry & live rate simulation</p>
@@ -130,10 +130,10 @@ export default function AdminGatewayModal({
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
             <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
               <Play className="w-4 h-4 text-brand-400" />
-              Live Rate Simulator & Market Stress Test
+              Live Rate Simulator & Market Testing
             </h4>
             <p className="text-xs text-slate-400 mb-3">
-              Override any currency rate relative to USD to simulate volatile market swings or presentation scenarios:
+              Override any currency rate relative to USD to simulate volatile market swings or testing scenarios:
             </p>
 
             <form onSubmit={handleApplySimulation} className="flex flex-wrap items-center gap-2">

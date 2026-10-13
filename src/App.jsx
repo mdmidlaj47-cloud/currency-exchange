@@ -9,12 +9,11 @@ import TravelBudgetTool from './components/TravelBudgetTool';
 import WatchlistWidget from './components/WatchlistWidget';
 import CurrencySelectModal from './components/CurrencySelectModal';
 import AdminGatewayModal from './components/AdminGatewayModal';
-import TeamProjectModal from './components/TeamProjectModal';
 import ConversionHistoryModal from './components/ConversionHistoryModal';
 import { exchangeApi } from './services/exchangeApi';
 import { BASELINE_USD_RATES } from './data/defaultRates';
 import { storage } from './services/storage';
-import { ArrowLeftRight, Layers, LineChart, EyeOff, Plane, ShieldCheck, GraduationCap, Github } from 'lucide-react';
+import { ArrowLeftRight, Layers, LineChart, EyeOff, Plane, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const [rates, setRates] = useState(BASELINE_USD_RATES);
@@ -28,7 +27,6 @@ export default function App() {
   const [selectorTarget, setSelectorTarget] = useState(null); // 'from' | 'to' | 'multi_base' | 'basket_add'
   const [basketAddCallback, setBasketAddCallback] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [isTeamOpen, setIsTeamOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Theme
@@ -95,7 +93,6 @@ export default function App() {
       <Navbar
         theme={theme}
         onToggleTheme={handleToggleTheme}
-        onOpenTeamModal={() => setIsTeamOpen(true)}
         onOpenAdminModal={() => setIsAdminOpen(true)}
         onOpenHistoryModal={() => setIsHistoryOpen(true)}
         isLive={isLive}
@@ -258,21 +255,18 @@ export default function App() {
       <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 px-4 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white">CURRENCY EXCHANGE APPLICATION</span>
+            <span className="font-bold text-white">Currenx</span>
             <span>•</span>
-            <span className="text-brand-400 font-semibold">GROUP 5</span>
+            <span className="text-brand-400 font-semibold">Currency Exchange Application</span>
           </div>
 
           <div className="text-slate-400">
-            Muhammed Midlaj (43) • Hazim Zayan K (31) • Ghazzal Ahammed V (28) • Farhan Shaikh (17) • Muhammed Rasal K K (48) • Fathima Dilna K P (19)
+            Real-time interbank rates • 160+ Global Currencies & Digital Assets
           </div>
 
-          <button
-            onClick={() => setIsTeamOpen(true)}
-            className="flex items-center gap-1.5 text-brand-400 hover:text-brand-300 font-bold transition-colors"
-          >
-            <GraduationCap className="w-4 h-4" /> View Presentation Slides Details
-          </button>
+          <div className="text-slate-500 font-mono text-[11px]">
+            Zero Hidden Spreads • Verified Transparency
+          </div>
         </div>
       </footer>
 
@@ -291,12 +285,6 @@ export default function App() {
         onForceRefresh={() => fetchRates(true)}
         lastUpdated={lastUpdated}
         isLive={isLive}
-      />
-
-      {/* Group 5 Presentation Showcase Modal */}
-      <TeamProjectModal
-        isOpen={isTeamOpen}
-        onClose={() => setIsTeamOpen(false)}
       />
 
       {/* History Modal */}
