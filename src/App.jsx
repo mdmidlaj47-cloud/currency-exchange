@@ -4,7 +4,6 @@ import LiveTicker from './components/LiveTicker';
 import MainConverter from './components/MainConverter';
 import MultiConverter from './components/MultiConverter';
 import TrendChart from './components/TrendChart';
-import BankFeeCalculator from './components/BankFeeCalculator';
 import TravelBudgetTool from './components/TravelBudgetTool';
 import WatchlistWidget from './components/WatchlistWidget';
 import CurrencySelectModal from './components/CurrencySelectModal';
@@ -12,7 +11,7 @@ import ConversionHistoryModal from './components/ConversionHistoryModal';
 import { exchangeApi } from './services/exchangeApi';
 import { BASELINE_USD_RATES } from './data/defaultRates';
 import { storage } from './services/storage';
-import { ArrowLeftRight, Layers, LineChart, EyeOff, Plane } from 'lucide-react';
+import { ArrowLeftRight, Layers, LineChart, Plane } from 'lucide-react';
 
 export default function App() {
   const [rates, setRates] = useState(BASELINE_USD_RATES);
@@ -20,7 +19,7 @@ export default function App() {
   const [toCode, setToCode] = useState('INR');
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isLive, setIsLive] = useState(true);
-  const [activeTab, setActiveTab] = useState('converter'); // 'converter' | 'multi' | 'trends' | 'fees' | 'traveler'
+  const [activeTab, setActiveTab] = useState('converter'); // 'converter' | 'multi' | 'trends' | 'traveler'
 
   // Modals
   const [selectorTarget, setSelectorTarget] = useState(null); // 'from' | 'to' | 'multi_base' | 'basket_add'
@@ -102,7 +101,7 @@ export default function App() {
             Global Currency <span className="bg-gradient-to-r from-brand-600 to-emerald-500 dark:from-brand-400 dark:to-emerald-300 bg-clip-text text-transparent">Exchange</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium transition-colors">
-            Live interbank exchange rates, historical trend analytics, and fee comparisons across 160+ world currencies.
+            Live interbank exchange rates, historical trend analytics, and travel currency calculators across 160+ world currencies.
           </p>
 
           {/* Clean Segmented Navigation Controls */}
@@ -141,18 +140,6 @@ export default function App() {
             >
               <LineChart className="w-4 h-4" />
               Historical Charts
-            </button>
-
-            <button
-              onClick={() => setActiveTab('fees')}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
-                activeTab === 'fees'
-                  ? 'bg-amber-500 text-slate-950 shadow-amber-500/25 font-black scale-105'
-                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              <EyeOff className="w-4 h-4" />
-              Bank Fee Comparison
             </button>
 
             <button
@@ -219,16 +206,6 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'fees' && (
-          <div className="space-y-8 animate-fadeIn">
-            <BankFeeCalculator
-              rates={rates}
-              fromCode={fromCode}
-              toCode={toCode}
-            />
-          </div>
-        )}
-
         {activeTab === 'traveler' && (
           <div className="space-y-8 animate-fadeIn">
             <TravelBudgetTool
@@ -240,7 +217,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Corporate Footer (Cleaned up as requested) */}
+      {/* Corporate Footer */}
       <footer className="mt-auto border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 px-4 text-xs text-slate-500 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
