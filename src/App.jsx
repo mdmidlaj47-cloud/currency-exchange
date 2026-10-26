@@ -8,12 +8,11 @@ import BankFeeCalculator from './components/BankFeeCalculator';
 import TravelBudgetTool from './components/TravelBudgetTool';
 import WatchlistWidget from './components/WatchlistWidget';
 import CurrencySelectModal from './components/CurrencySelectModal';
-import AdminGatewayModal from './components/AdminGatewayModal';
 import ConversionHistoryModal from './components/ConversionHistoryModal';
 import { exchangeApi } from './services/exchangeApi';
 import { BASELINE_USD_RATES } from './data/defaultRates';
 import { storage } from './services/storage';
-import { ArrowLeftRight, Layers, LineChart, EyeOff, Plane, ShieldCheck } from 'lucide-react';
+import { ArrowLeftRight, Layers, LineChart, EyeOff, Plane } from 'lucide-react';
 
 export default function App() {
   const [rates, setRates] = useState(BASELINE_USD_RATES);
@@ -26,7 +25,6 @@ export default function App() {
   // Modals
   const [selectorTarget, setSelectorTarget] = useState(null); // 'from' | 'to' | 'multi_base' | 'basket_add'
   const [basketAddCallback, setBasketAddCallback] = useState(null);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Theme
@@ -77,7 +75,7 @@ export default function App() {
     setSelectorTarget(null);
   };
 
-  const handleSelectPair = (newFrom, newTo, customAmount = null) => {
+  const handleSelectPair = (newFrom, newTo) => {
     setFromCode(newFrom);
     setToCode(newTo);
     setActiveTab('converter');
@@ -93,27 +91,21 @@ export default function App() {
       <Navbar
         theme={theme}
         onToggleTheme={handleToggleTheme}
-        onOpenAdminModal={() => setIsAdminOpen(true)}
         onOpenHistoryModal={() => setIsHistoryOpen(true)}
         isLive={isLive}
       />
 
-      {/* Hero Banner / Navigation Tabs */}
+      {/* Hero Section & Navigation */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
-        {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/25 text-brand-400 text-xs font-bold tracking-wide">
-            <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse" />
-            LIVE GLOBAL FINANCIAL INTELLIGENCE PLATFORM
-          </div>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white dark:text-white">
-            Currency Exchange <span className="bg-gradient-to-r from-brand-400 to-emerald-300 bg-clip-text text-transparent">Application</span>
+            Global Currency <span className="bg-gradient-to-r from-brand-400 to-emerald-300 bg-clip-text text-transparent">Exchange</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto font-medium">
-            Real-time multi-currency conversions, automated bank markup fee audits, interactive trend analytics, and traveler utilities.
+            Live interbank exchange rates, historical trend analytics, and fee comparisons across 160+ world currencies.
           </p>
 
-          {/* Module Navigation Tabs */}
+          {/* Clean Segmented Navigation Controls */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 pt-3">
             <button
               onClick={() => setActiveTab('converter')}
@@ -124,7 +116,7 @@ export default function App() {
               }`}
             >
               <ArrowLeftRight className="w-4 h-4" />
-              Converter & Trends
+              Converter
             </button>
 
             <button
@@ -136,7 +128,7 @@ export default function App() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              Smart Multi-Basket
+              Multi-Currency Basket
             </button>
 
             <button
@@ -148,7 +140,7 @@ export default function App() {
               }`}
             >
               <LineChart className="w-4 h-4" />
-              Trend Analysis
+              Historical Charts
             </button>
 
             <button
@@ -160,7 +152,7 @@ export default function App() {
               }`}
             >
               <EyeOff className="w-4 h-4" />
-              Hidden Bank Fees
+              Bank Fee Comparison
             </button>
 
             <button
@@ -172,7 +164,7 @@ export default function App() {
               }`}
             >
               <Plane className="w-4 h-4" />
-              Traveler & Shopper
+              Travel Calculator
             </button>
           </div>
         </div>
@@ -251,21 +243,17 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 px-4 text-center text-xs text-slate-400">
+      {/* Corporate Footer */}
+      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 px-4 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white">Currenx</span>
+            <span className="font-bold text-white text-sm">Currenx</span>
             <span>•</span>
-            <span className="text-brand-400 font-semibold">Currency Exchange Application</span>
+            <span className="text-slate-400">Global Financial Currency Platform</span>
           </div>
 
-          <div className="text-slate-400">
-            Real-time interbank rates • 160+ Global Currencies & Digital Assets
-          </div>
-
-          <div className="text-slate-500 font-mono text-[11px]">
-            Zero Hidden Spreads • Verified Transparency
+          <div className="text-slate-400 text-center sm:text-right">
+            Mid-market exchange rates provided for informational purposes only.
           </div>
         </div>
       </footer>
@@ -276,15 +264,6 @@ export default function App() {
         onClose={() => setSelectorTarget(null)}
         onSelect={handleSelectCurrency}
         currentCode={selectorTarget === 'from' ? fromCode : toCode}
-      />
-
-      {/* Admin Gateway Modal */}
-      <AdminGatewayModal
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        onForceRefresh={() => fetchRates(true)}
-        lastUpdated={lastUpdated}
-        isLive={isLive}
       />
 
       {/* History Modal */}

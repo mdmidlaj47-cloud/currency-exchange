@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeftRight, Copy, Check, Star, RefreshCw, Sparkles, TrendingUp, ShieldCheck } from 'lucide-react';
+import { ArrowLeftRight, Copy, Check, Star, RefreshCw, Sparkles, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getCurrencyByCode } from '../data/currencies';
 import { exchangeApi } from '../services/exchangeApi';
@@ -62,12 +62,12 @@ export default function MainConverter({
   };
 
   const handleCopy = () => {
-    const textToCopy = `${amount} ${fromCode} = ${formatNumber(convertedAmount)} ${toCode} (Rate: 1 ${fromCode} = ${rate.toFixed(4)} ${toCode})`;
+    const textToCopy = `${amount} ${fromCode} = ${formatNumber(convertedAmount)} ${toCode}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     confetti({
-      particleCount: 30,
-      spread: 60,
+      particleCount: 25,
+      spread: 50,
       origin: { y: 0.7 }
     });
     setTimeout(() => setCopied(false), 2000);
@@ -82,8 +82,8 @@ export default function MainConverter({
       favs.push({ id: Date.now().toString(), from: fromCode, to: toCode, pinned: true });
       setIsPinned(true);
       confetti({
-        particleCount: 20,
-        spread: 45,
+        particleCount: 15,
+        spread: 40,
         origin: { y: 0.8 }
       });
     }
@@ -97,29 +97,23 @@ export default function MainConverter({
     return val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const quickAmounts = [100, 500, 1000, 2500, 5000, 10000];
+  const quickAmounts = [100, 500, 1000, 2500, 5000];
 
   return (
     <div className="w-full bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all">
-      {/* Background Ambient Glow */}
+      {/* Background Glow */}
       <div className="absolute -top-24 -right-24 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6 relative z-10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              Currency Converter
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                Live Mid-Market
-              </span>
-            </h2>
-            <p className="text-xs text-slate-400">Fast, verified interbank rates with zero hidden markups</p>
-          </div>
+        <div>
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            Real-Time Currency Converter
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Interbank mid-market exchange rates updated in real time
+          </p>
         </div>
 
         {/* Favorite & Refresh buttons */}
@@ -138,7 +132,7 @@ export default function MainConverter({
 
           <button
             onClick={onRefreshRates}
-            title="Refresh latest live rates"
+            title="Refresh latest exchange rates"
             className="p-2.5 rounded-xl bg-slate-800/80 text-slate-400 border border-slate-700/80 hover:text-white hover:bg-slate-800 transition-all active:scale-95"
           >
             <RefreshCw className="w-4 h-4" />
@@ -148,10 +142,10 @@ export default function MainConverter({
 
       {/* Main Converter Grid */}
       <div className="grid grid-cols-1 md:grid-cols-11 gap-3.5 items-center relative z-10">
-        {/* FROM INPUT CARD */}
+        {/* FROM CARD */}
         <div className="md:col-span-5 bg-slate-950/70 border border-slate-800 rounded-2xl p-4 transition-all focus-within:border-brand-500/70 focus-within:ring-1 focus-within:ring-brand-500/50">
           <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5 font-medium">
-            <span>You Send</span>
+            <span>Amount</span>
             <span className="font-mono text-slate-400">{fromCurr.country}</span>
           </div>
 
@@ -185,18 +179,18 @@ export default function MainConverter({
           <button
             onClick={handleSwap}
             title="Swap base and target currencies"
-            className={`w-12 h-12 rounded-2xl bg-brand-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-brand-500/25 hover:bg-brand-400 transition-all duration-300 active:scale-90 ${
+            className={`w-11 h-11 rounded-2xl bg-brand-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-brand-500/25 hover:bg-brand-400 transition-all duration-300 active:scale-90 ${
               isSwapping ? 'rotate-180 scale-105' : ''
             }`}
           >
-            <ArrowLeftRight className="w-5 h-5 stroke-[2.5]" />
+            <ArrowLeftRight className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
 
-        {/* TO OUTPUT CARD */}
+        {/* TO CARD */}
         <div className="md:col-span-5 bg-slate-950/70 border border-slate-800 rounded-2xl p-4 transition-all focus-within:border-brand-500/70">
           <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5 font-medium">
-            <span>Recipient Gets</span>
+            <span>Converted to</span>
             <span className="font-mono text-slate-400">{toCurr.country}</span>
           </div>
 
@@ -241,10 +235,6 @@ export default function MainConverter({
       {/* Prominent Calculation Banner */}
       <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800/90 relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-brand-400" />
-            Verified Interbank Conversion
-          </div>
           <div className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">
             {amount || '0'} {fromCode} = <span className="text-brand-400">{formatNumber(convertedAmount)} {toCode}</span>
           </div>
@@ -268,7 +258,7 @@ export default function MainConverter({
             {copied ? (
               <>
                 <Check className="w-4 h-4 stroke-[3]" />
-                Copied to Clipboard!
+                Copied!
               </>
             ) : (
               <>
@@ -283,9 +273,7 @@ export default function MainConverter({
       {/* Recents Bar */}
       {recentList.length > 0 && (
         <div className="mt-5 pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-2 text-xs relative z-10">
-          <span className="text-slate-400 font-medium flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5 text-brand-400" /> Recent:
-          </span>
+          <span className="text-slate-400 font-medium">Recent Conversions:</span>
           {recentList.map((rec) => (
             <button
               key={rec.id}
