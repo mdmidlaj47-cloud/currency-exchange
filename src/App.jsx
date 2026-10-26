@@ -33,10 +33,10 @@ export default function App() {
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
-      document.body.className = 'bg-slate-950 text-slate-100 antialiased selection:bg-brand-500 selection:text-white';
+      document.body.className = 'bg-slate-950 text-slate-100 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300';
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.className = 'bg-slate-100 text-slate-900 antialiased selection:bg-brand-500 selection:text-white';
+      document.body.className = 'bg-slate-50 text-slate-900 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300';
     }
     storage.setTheme(theme);
   }, [theme]);
@@ -98,10 +98,10 @@ export default function App() {
       {/* Hero Section & Navigation */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white dark:text-white">
-            Global Currency <span className="bg-gradient-to-r from-brand-400 to-emerald-300 bg-clip-text text-transparent">Exchange</span>
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white transition-colors">
+            Global Currency <span className="bg-gradient-to-r from-brand-600 to-emerald-500 dark:from-brand-400 dark:to-emerald-300 bg-clip-text text-transparent">Exchange</span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto font-medium">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium transition-colors">
             Live interbank exchange rates, historical trend analytics, and fee comparisons across 160+ world currencies.
           </p>
 
@@ -112,7 +112,7 @@ export default function App() {
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
                 activeTab === 'converter'
                   ? 'bg-brand-500 text-slate-950 shadow-brand-500/25 font-black scale-105'
-                  : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <ArrowLeftRight className="w-4 h-4" />
@@ -123,8 +123,8 @@ export default function App() {
               onClick={() => setActiveTab('multi')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
                 activeTab === 'multi'
-                  ? 'bg-purple-500 text-slate-950 shadow-purple-500/25 font-black scale-105'
-                  : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  ? 'bg-purple-600 text-white dark:bg-purple-500 dark:text-slate-950 shadow-purple-500/25 font-black scale-105'
+                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <Layers className="w-4 h-4" />
@@ -135,8 +135,8 @@ export default function App() {
               onClick={() => setActiveTab('trends')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
                 activeTab === 'trends'
-                  ? 'bg-blue-500 text-slate-950 shadow-blue-500/25 font-black scale-105'
-                  : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-950 shadow-blue-500/25 font-black scale-105'
+                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <LineChart className="w-4 h-4" />
@@ -148,7 +148,7 @@ export default function App() {
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
                 activeTab === 'fees'
                   ? 'bg-amber-500 text-slate-950 shadow-amber-500/25 font-black scale-105'
-                  : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <EyeOff className="w-4 h-4" />
@@ -159,8 +159,8 @@ export default function App() {
               onClick={() => setActiveTab('traveler')}
               className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${
                 activeTab === 'traveler'
-                  ? 'bg-teal-500 text-slate-950 shadow-teal-500/25 font-black scale-105'
-                  : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+                  ? 'bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-950 shadow-teal-500/25 font-black scale-105'
+                  : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <Plane className="w-4 h-4" />
@@ -172,7 +172,6 @@ export default function App() {
         {/* Dynamic Tab Contents */}
         {activeTab === 'converter' && (
           <div className="space-y-8 animate-fadeIn">
-            {/* Primary 2-Way Converter */}
             <MainConverter
               rates={rates}
               fromCode={fromCode}
@@ -185,14 +184,12 @@ export default function App() {
               onRefreshRates={() => fetchRates(true)}
             />
 
-            {/* Interactive Trend Chart below */}
             <TrendChart
               rates={rates}
               fromCode={fromCode}
               toCode={toCode}
             />
 
-            {/* Watchlist Section */}
             <WatchlistWidget
               rates={rates}
               onSelectPair={handleSelectPair}
@@ -243,17 +240,17 @@ export default function App() {
         )}
       </main>
 
-      {/* Corporate Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 px-4 text-xs text-slate-400">
+      {/* Corporate Footer (Cleaned up as requested) */}
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 py-6 px-4 text-xs text-slate-500 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white text-sm">Currenx</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm">Currenx</span>
             <span>•</span>
-            <span className="text-slate-400">Global Financial Currency Platform</span>
+            <span>Global Financial Currency Platform</span>
           </div>
 
-          <div className="text-slate-400 text-center sm:text-right">
-            Mid-market exchange rates provided for informational purposes only.
+          <div>
+            © 2026 Currenx Technologies. All rights reserved.
           </div>
         </div>
       </footer>

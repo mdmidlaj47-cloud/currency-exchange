@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { LineChart, Calendar, TrendingUp, TrendingDown, Maximize2, Info } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { generateHistoricalData } from '../data/defaultRates';
 import { getCurrencyByCode } from '../data/currencies';
 import { exchangeApi } from '../services/exchangeApi';
@@ -18,7 +18,6 @@ export default function TrendChart({
   toCode = 'INR'
 }) {
   const [period, setPeriod] = useState('30D');
-  const [hoveredPoint, setHoveredPoint] = useState(null);
   const canvasRef = useRef(null);
 
   const fromCurr = getCurrencyByCode(fromCode);
@@ -26,12 +25,10 @@ export default function TrendChart({
 
   const { rate: currentRate } = exchangeApi.convert(1, fromCode, toCode, rates);
 
-  // Generate historical data points for this pair and period
   const historyData = useMemo(() => {
     return generateHistoricalData(currentRate, period);
   }, [currentRate, period, fromCode, toCode]);
 
-  // Statistics
   const stats = useMemo(() => {
     if (!historyData.length) return { min: 0, max: 0, avg: 0, change: 0, changePct: 0 };
     const ratesArr = historyData.map(d => d.rate);
@@ -53,7 +50,6 @@ export default function TrendChart({
     };
   }, [historyData]);
 
-  // Canvas drawing effect
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !historyData.length) return;
@@ -72,15 +68,14 @@ export default function TrendChart({
     const max = stats.max * 1.002;
     const range = (max - min) || 1;
 
-    // Map point coordinates
     const points = historyData.map((d, i) => {
       const x = padding.left + (i / (historyData.length - 1)) * chartW;
       const y = padding.top + chartH - ((d.rate - min) / range) * chartH;
       return { x, y, data: d };
     });
 
-    // Draw grid lines
-    ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
+    const isDark = document.documentElement.classList.contains('dark');
+    ctx.strokeStyle = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(203, 213, 225, 0.8)';
     ctx.lineWidth = 1 * window.devicePixelRatio;
     ctx.setLineDash([4 * window.devicePixelRatio, 4 * window.devicePixelRatio]);
 
@@ -93,7 +88,6 @@ export default function TrendChart({
     }
     ctx.setLineDash([]);
 
-    // Gradient fill under curve
     const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
     if (stats.isPositive) {
       gradient.addColorStop(0, 'rgba(16, 185, 129, 0.28)');
@@ -111,12 +105,10 @@ export default function TrendChart({
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Draw main line
     ctx.beginPath();
     points.forEach((p, i) => {
       if (i === 0) ctx.moveTo(p.x, p.y);
       else {
-        // Smooth bezier interpolation
         const prev = points[i - 1];
         const cx = (prev.x + p.x) / 2;
         ctx.bezierCurveTo(cx, prev.y, cx, p.y, p.x, p.y);
@@ -129,14 +121,13 @@ export default function TrendChart({
     ctx.lineJoin = 'round';
     ctx.stroke();
 
-    // Draw endpoints
     const lastP = points[points.length - 1];
     ctx.beginPath();
     ctx.arc(lastP.x, lastP.y, 6 * window.devicePixelRatio, 0, Math.PI * 2);
     ctx.fillStyle = stats.isPositive ? '#10b981' : '#f43f5e';
     ctx.fill();
     ctx.lineWidth = 2 * window.devicePixelRatio;
-    ctx.strokeStyle = '#0f172a';
+    ctx.strokeStyle = isDark ? '#0f172a' : '#ffffff';
     ctx.stroke();
 
   }, [historyData, stats]);
@@ -149,33 +140,28 @@ export default function TrendChart({
   };
 
   return (
-    <div className="w-full bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl transition-all">
+    <div className="w-full bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-2xl backdrop-blur-xl transition-all">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
-            <LineChart className="w-5 h-5" />
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {fromCode} / {toCode} Historical Trend
+            </h2>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+              stats.isPositive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400'
+            }`}>
+              {stats.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              {stats.changePct >= 0 ? '+' : ''}{stats.changePct.toFixed(2)}%
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                {fromCode} / {toCode} Historical Trend
-              </h2>
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                stats.isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-              }`}>
-                {stats.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                {stats.changePct >= 0 ? '+' : ''}{stats.changePct.toFixed(2)}%
-              </span>
-            </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Live market tracking & volatility overview for smart financial planning
-            </p>
-          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Interbank rate fluctuation history and volatility tracking
+          </p>
         </div>
 
         {/* Timeframe Selector */}
-        <div className="flex items-center gap-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs font-medium">
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-medium">
           {TIMEFRAMES.map((tf) => (
             <button
               key={tf.id}
@@ -183,7 +169,7 @@ export default function TrendChart({
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 period === tf.id
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800/60'
               }`}
             >
               {tf.id}
@@ -194,44 +180,43 @@ export default function TrendChart({
 
       {/* Metric Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5">
-          <div className="text-[11px] text-slate-400 font-medium">Current Rate</div>
-          <div className="text-base sm:text-lg font-bold font-mono text-white mt-0.5">
+        <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5">
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Current Rate</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">
             {formatRate(currentRate)}
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5">
-          <div className="text-[11px] text-slate-400 font-medium">{period} High</div>
-          <div className="text-base sm:text-lg font-bold font-mono text-emerald-400 mt-0.5">
+        <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5">
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{period} High</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
             {formatRate(stats.max)}
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5">
-          <div className="text-[11px] text-slate-400 font-medium">{period} Low</div>
-          <div className="text-base sm:text-lg font-bold font-mono text-rose-400 mt-0.5">
+        <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5">
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{period} Low</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-rose-600 dark:text-rose-400 mt-0.5">
             {formatRate(stats.min)}
           </div>
         </div>
 
-        <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3.5">
-          <div className="text-[11px] text-slate-400 font-medium">{period} Average</div>
-          <div className="text-base sm:text-lg font-bold font-mono text-slate-300 mt-0.5">
+        <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5">
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{period} Average</div>
+          <div className="text-base sm:text-lg font-bold font-mono text-slate-700 dark:text-slate-300 mt-0.5">
             {formatRate(stats.avg)}
           </div>
         </div>
       </div>
 
       {/* Chart Canvas Area */}
-      <div className="relative w-full h-[320px] bg-slate-950/90 border border-slate-800/90 rounded-2xl overflow-hidden p-2">
+      <div className="relative w-full h-[320px] bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800/90 rounded-2xl overflow-hidden p-2">
         <canvas
           ref={canvasRef}
           className="w-full h-full block"
         />
 
-        {/* Date Footnote */}
-        <div className="absolute bottom-2 left-4 right-4 flex justify-between text-[11px] font-mono text-slate-400 pointer-events-none">
+        <div className="absolute bottom-2 left-4 right-4 flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 pointer-events-none">
           <span>{historyData[0]?.label || ''}</span>
           <span>Midpoint</span>
           <span>Today (Live)</span>
