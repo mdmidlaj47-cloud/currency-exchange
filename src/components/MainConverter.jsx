@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeftRight, Copy, Check, Star, RefreshCw } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { ArrowLeftRight, Copy, Check, RefreshCw } from 'lucide-react';
 import { getCurrencyByCode } from '../data/currencies';
 import { exchangeApi } from '../services/exchangeApi';
 import { storage } from '../services/storage';
@@ -20,7 +19,6 @@ export default function MainConverter({
   const [copied, setCopied] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [recentList, setRecentList] = useState([]);
-  const [isPinned, setIsPinned] = useState(false);
 
   const fromCurr = getCurrencyByCode(fromCode);
   const toCurr = getCurrencyByCode(toCode);
@@ -28,9 +26,6 @@ export default function MainConverter({
   const { convertedAmount, rate, invertedRate } = exchangeApi.convert(amount, fromCode, toCode, rates);
 
   useEffect(() => {
-    const favs = storage.getFavorites();
-    const found = favs.some(f => f.from === fromCode && f.to === toCode);
-    setIsPinned(found);
     setRecentList(storage.getHistory().slice(0, 5));
   }, [fromCode, toCode]);
 
@@ -63,29 +58,7 @@ export default function MainConverter({
     const textToCopy = `${amount} ${fromCode} = ${formatNumber(convertedAmount)} ${toCode}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
-    confetti({
-      particleCount: 25,
-      spread: 50,
-      origin: { y: 0.7 }
-    });
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleToggleFavorite = () => {
-    let favs = storage.getFavorites();
-    if (isPinned) {
-      favs = favs.filter(f => !(f.from === fromCode && f.to === toCode));
-      setIsPinned(false);
-    } else {
-      favs.push({ id: Date.now().toString(), from: fromCode, to: toCode, pinned: true });
-      setIsPinned(true);
-      confetti({
-        particleCount: 15,
-        spread: 40,
-        origin: { y: 0.8 }
-      });
-    }
-    storage.saveFavorites(favs);
   };
 
   const formatNumber = (val) => {
@@ -114,20 +87,8 @@ export default function MainConverter({
           </p>
         </div>
 
-        {/* Favorite & Refresh buttons */}
+        {/* Refresh button */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleToggleFavorite}
-            title={isPinned ? "Remove from watchlist" : "Pin pair to watchlist"}
-            className={`p-2.5 rounded-xl border transition-all ${
-              isPinned
-                ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-sm'
-                : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700/80 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Star className={`w-4 h-4 ${isPinned ? 'fill-current' : ''}`} />
-          </button>
-
           <button
             onClick={onRefreshRates}
             title="Refresh latest exchange rates"
