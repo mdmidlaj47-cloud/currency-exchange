@@ -101,7 +101,7 @@ export default function App() {
             Global Currency <span className="bg-gradient-to-r from-brand-600 to-emerald-500 dark:from-brand-400 dark:to-emerald-300 bg-clip-text text-transparent">Exchange</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium transition-colors">
-            Live interbank exchange rates, historical trend analytics, and travel currency calculators across 160+ world currencies.
+            Real-time foreign exchange data, interactive market analytics, and multi-currency tools across 160+ global currencies.
           </p>
 
           {/* Clean Segmented Navigation Controls */}
