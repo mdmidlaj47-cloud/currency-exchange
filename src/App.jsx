@@ -19,7 +19,14 @@ export default function App() {
   const [toCode, setToCode] = useState('INR');
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isLive, setIsLive] = useState(true);
-  const [activeTab, setActiveTab] = useState('converter'); // 'converter' | 'multi' | 'trends' | 'traveler'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      const t = p.get('tab');
+      if (['converter', 'multi', 'trends', 'traveler'].includes(t)) return t;
+    }
+    return 'converter';
+  });
 
   // Modals
   const [selectorTarget, setSelectorTarget] = useState(null); // 'from' | 'to' | 'multi_base' | 'basket_add'
